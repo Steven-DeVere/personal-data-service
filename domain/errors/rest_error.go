@@ -17,3 +17,12 @@ func NewBadRequestError(message string) *RestErr {
 		Error:   "bad_request",
 	}
 }
+
+// NewNotFoundError returns a bad "not found in the db" error
+func NewNotFoundError(message string) *RestErr {
+	return &RestErr{
+		Message: message,
+		Status:  http.StatusNotFound,
+		Error:   "not_found",
+	}
+}
