@@ -30,7 +30,30 @@ func GetArticle(c *gin.Context) {
 
 // GetAllArticles gets all articles
 func GetAllArticles(c *gin.Context) {
-	c.String(http.StatusNotImplemented, "implement me!")
+	articles, dbErr := articles.GetAll()
+	if dbErr != nil {
+		c.JSON(dbErr.Status, dbErr)
+	}
+
+	c.JSON(http.StatusOK, articles)
+}
+
+// DeleteArticle deletes an article
+func DeleteArticle(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		restErr := errors.NewBadRequestError("invalid id query string")
+
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+
+	article, dbErr := articles.Delete(id)
+	if dbErr != nil {
+		c.JSON(dbErr.Status, dbErr)
+	}
+
+	c.JSON(http.StatusOK, article)
 }
 
 // SearchArticle searches for an article

@@ -83,12 +83,12 @@ func (article *Article) Save() *errors.RestErr {
 }
 
 // Delete removes an article from the database
-func (article *Article) Delete() *errors.RestErr {
-	current := articlesDB[article.ID]
+func Delete(articleID int64) (*Article, *errors.RestErr) {
+	current := articlesDB[articleID]
 	if current == nil {
-		return errors.NewBadRequestError(fmt.Sprintf("article %d does not exist", article.ID))
+		return nil, errors.NewBadRequestError(fmt.Sprintf("article %d does not exist", articleID))
 	}
 
-	articlesDB[article.ID] = nil
-	return nil
+	delete(articlesDB, articleID)
+	return current, nil
 }
