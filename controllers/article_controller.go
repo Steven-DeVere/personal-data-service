@@ -56,9 +56,23 @@ func DeleteArticle(c *gin.Context) {
 	c.JSON(http.StatusOK, article)
 }
 
-// SearchArticle searches for an article
-func SearchArticle(c *gin.Context) {
-	c.String(http.StatusNotImplemented, "implement me!")
+// SearchArticle searches for an article by categories
+func SearchArticles(c *gin.Context) {
+	var categories []string
+
+	if err := c.ShouldBindJSON(&categories); err != nil {
+		restErr := errors.NewBadRequestError("invalid json body")
+
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+
+	articles, dbErr := articles.GetAllByCategories(categories)
+	if dbErr != nil {
+		c.JSON(dbErr.Status, dbErr)
+	}
+
+	c.JSON(http.StatusOK, articles)
 }
 
 // CreateArticle creates a new article
