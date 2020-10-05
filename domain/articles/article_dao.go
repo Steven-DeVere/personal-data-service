@@ -13,14 +13,13 @@ var (
 )
 
 // Get retrieves an article from the database
-func (article *Article) Get() *errors.RestErr {
-	result := articlesDB[article.ID]
+func Get(articleID int64) (*Article, *errors.RestErr) {
+	result := articlesDB[articleID]
 	if result == nil {
-		return errors.NewNotFoundError(fmt.Sprintf("article %d not found", article.ID))
+		return nil, errors.NewNotFoundError(fmt.Sprintf("article %d not found", articleID))
 	}
 
-	article = result
-	return nil
+	return result, nil
 }
 
 // GetAll retrieves all articles from the database
