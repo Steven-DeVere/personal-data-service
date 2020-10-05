@@ -21,5 +21,9 @@ func (article *Article) Validate() *errors.RestErr {
 		return errors.NewBadRequestError("Invalid Title")
 	}
 
+	if len(article.Categories) == 0 {
+		return errors.NewBadRequestError("Need to add categories")
+	}
+
 	return nil
 }
