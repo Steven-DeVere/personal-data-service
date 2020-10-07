@@ -3,6 +3,7 @@ package articles
 import (
 	"fmt"
 
+	"github.com/devere-here/personal-data-service/datasources/mysql/articles_db"
 	"github.com/devere-here/personal-data-service/domain/errors"
 )
 
@@ -14,6 +15,10 @@ var (
 
 // Get retrieves an article from the database
 func Get(articleID int64) (*Article, *errors.RestErr) {
+	if err := articles_db.Client.Ping(); err != nil {
+		panic(err)
+	}
+
 	result := articlesDB[articleID]
 	if result == nil {
 		return nil, errors.NewNotFoundError(fmt.Sprintf("article %d not found", articleID))
