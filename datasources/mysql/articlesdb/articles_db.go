@@ -1,4 +1,4 @@
-package articles_db
+package articlesdb
 
 import (
 	"database/sql"
@@ -6,10 +6,12 @@ import (
 	"log"
 	"os"
 
+	// driver for mysql
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 )
 
+// Client represent articlesDB client
 var (
 	Client *sql.DB
 )
@@ -26,7 +28,13 @@ func init() {
 	hostName := os.Getenv("MYSQL_HOST_NAME")
 	dbName := os.Getenv("MYSQL_DB_NAME")
 
-	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s", userName, password, hostName, dbName)
+	dataSourceName := fmt.Sprintf(
+		"%s:%s@tcp(%s)/%s",
+		userName,
+		password,
+		hostName,
+		dbName,
+	)
 
 	var dbSetupErr error
 	Client, dbSetupErr = sql.Open("mysql", dataSourceName)

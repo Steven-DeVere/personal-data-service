@@ -4,11 +4,10 @@ import "github.com/devere-here/personal-data-service/domain/errors"
 
 // Article defines the article struct
 type Article struct {
-	ID         int64    `json:"id"`
-	Title      string   `json:"title"`
-	Blurb      string   `json:"blurb"`
-	Content    string   `json:"content"`
-	Categories []string `json:"categories"`
+	ID      int64  `json:"id"`
+	Title   string `json:"title"`
+	Blurb   string `json:"blurb"`
+	Content string `json:"content"`
 }
 
 // Validate validates the article
@@ -19,10 +18,6 @@ func (article *Article) Validate() *errors.RestErr {
 
 	if article.Title == "" {
 		return errors.NewBadRequestError("Invalid Title")
-	}
-
-	if len(article.Categories) == 0 {
-		return errors.NewBadRequestError("Need to add categories")
 	}
 
 	return nil
