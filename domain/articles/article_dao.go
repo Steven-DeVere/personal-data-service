@@ -2,6 +2,7 @@ package articles
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/devere-here/personal-data-service/datasources/mysql/articlesdb"
 	"github.com/devere-here/personal-data-service/domain/errors"
@@ -9,6 +10,8 @@ import (
 
 const (
 	queryInsertArticles = "INSERT INTO articles(title, blurb, content) VALUES(?, ?, ?);"
+	queryGetAllArticles = "SELECT * FROM articles;"
+	queryGetArticle     = "SELECT * FROM articles WHERE id=?"
 )
 
 // Only point in the application where you interact with the database
@@ -19,29 +22,46 @@ var (
 
 // Get retrieves an article from the database
 func Get(articleID int64) (*Article, *errors.RestErr) {
-	if err := articlesdb.Client.Ping(); err != nil {
-		panic(err)
+	stmt, err := articlesdb.Client.Prepare(queryGetArticle)
+	if err != nil {
+		return nil, errors.NewInternalServerError(err.Error())
+	}
+	defer stmt.Close()
+
+	article := Article{}
+	result := stmt.QueryRow(articleID)
+	if err := result.Scan(&article.ID, &article.Title, &article.Blurb, &article.Content); err != nil {
+		return nil, errors.NewInternalServerError(fmt.Sprintf("error when trying to get article %d", articleID))
 	}
 
-	result := articlesDB[articleID]
-	if result == nil {
-		return nil, errors.NewNotFoundError(fmt.Sprintf("article %d not found", articleID))
-	}
-
-	return result, nil
+	return &article, nil
 }
 
 // GetAll retrieves all articles from the database
-func GetAll() ([]Article, *errors.RestErr) {
-	var articles []Article
-	for _, article := range articlesDB {
-		if article == nil {
-			return nil, errors.NewInternalServerError("Internal DB error, DB contains nil value for article")
+func GetAll() (*[]Article, *errors.RestErr) {
+	stmt, err := articlesdb.Client.Prepare(queryGetAllArticles)
+	if err != nil {
+		return nil, errors.NewInternalServerError(err.Error())
+	}
+	defer stmt.Close()
+
+	articles := []Article{}
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, errors.NewInternalServerError("error when trying to get articles")
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		article := Article{}
+		if err := rows.Scan(&article.ID, &article.Title, &article.Blurb, &article.Content); err != nil {
+			log.Fatal(err)
 		}
-		articles = append(articles, *article)
+
+		articles = append(articles, article)
 	}
 
-	return articles, nil
+	return &articles, nil
 }
 
 // Update updates an article from the database
