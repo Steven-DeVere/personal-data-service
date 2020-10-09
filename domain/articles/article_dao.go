@@ -12,6 +12,7 @@ const (
 	queryInsertArticles = "INSERT INTO articles(title, blurb, content) VALUES(?, ?, ?);"
 	queryGetAllArticles = "SELECT * FROM articles;"
 	queryGetArticle     = "SELECT * FROM articles WHERE id=?"
+	queryRemoveArticle  = "DELETE FROM articles WHERE id=?"
 )
 
 // Only point in the application where you interact with the database
@@ -98,12 +99,17 @@ func (article *Article) Save() *errors.RestErr {
 }
 
 // Delete removes an article from the database
-func Delete(articleID int64) (*Article, *errors.RestErr) {
-	current := articlesDB[articleID]
-	if current == nil {
-		return nil, errors.NewBadRequestError(fmt.Sprintf("article %d does not exist", articleID))
+func Delete(articleID int64) (*int64, *errors.RestErr) {
+	stmt, err := articlesdb.Client.Prepare(queryRemoveArticle)
+	if err != nil {
+		return nil, errors.NewInternalServerError(err.Error())
+	}
+	defer stmt.Close()
+
+	_, execErr := stmt.Exec(articleID)
+	if execErr != nil {
+		return nil, errors.NewInternalServerError(fmt.Sprintf("error when trying to delete article: %s", err.Error()))
 	}
 
-	delete(articlesDB, articleID)
-	return current, nil
+	return &articleID, nil
 }

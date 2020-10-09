@@ -48,12 +48,12 @@ func DeleteArticle(c *gin.Context) {
 		return
 	}
 
-	article, dbErr := articles.Delete(id)
+	articleID, dbErr := articles.Delete(id)
 	if dbErr != nil {
 		c.JSON(dbErr.Status, dbErr)
 	}
 
-	c.JSON(http.StatusOK, article)
+	c.JSON(http.StatusOK, articleID)
 }
 
 // CreateArticle creates a new article
