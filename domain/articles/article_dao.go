@@ -11,8 +11,9 @@ import (
 const (
 	queryInsertArticles = "INSERT INTO articles(title, blurb, content) VALUES(?, ?, ?);"
 	queryGetAllArticles = "SELECT * FROM articles;"
-	queryGetArticle     = "SELECT * FROM articles WHERE id=?"
-	queryRemoveArticle  = "DELETE FROM articles WHERE id=?"
+	queryGetArticle     = "SELECT * FROM articles WHERE id=?;"
+	queryRemoveArticle  = "DELETE FROM articles WHERE id=?;"
+	queryUpdateArticle  = "UPDATE articles SET title=?, blurb=?, content=? WHERE id=?;"
 )
 
 // Only point in the application where you interact with the database
@@ -65,17 +66,6 @@ func GetAll() (*[]Article, *errors.RestErr) {
 	return &articles, nil
 }
 
-// Update updates an article from the database
-func (article *Article) Update() *errors.RestErr {
-	result := articlesDB[article.ID]
-	if result == nil {
-		return errors.NewNotFoundError(fmt.Sprintf("article %d not found", article.ID))
-	}
-
-	articlesDB[article.ID] = article
-	return nil
-}
-
 // Save saves an article to the database
 func (article *Article) Save() *errors.RestErr {
 	stmt, err := articlesdb.Client.Prepare(queryInsertArticles)
@@ -112,4 +102,20 @@ func Delete(articleID int64) (*int64, *errors.RestErr) {
 	}
 
 	return &articleID, nil
+}
+
+// Update updates the value of an article in the database
+func (article *Article) Update() *errors.RestErr {
+	stmt, err := articlesdb.Client.Prepare(queryUpdateArticle)
+	if err != nil {
+		return errors.NewInternalServerError(err.Error())
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(article.Title, article.Blurb, article.Content, article.ID)
+	if err != nil {
+		return errors.NewInternalServerError(fmt.Sprintf("error when trying to update article: %s", err.Error()))
+	}
+
+	return nil
 }

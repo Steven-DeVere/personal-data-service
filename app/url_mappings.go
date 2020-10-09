@@ -9,5 +9,6 @@ func mapUrls() {
 	router.GET("/articles", controllers.GetAllArticles)
 	router.GET("/articles/:id", controllers.GetArticle)
 	router.POST("/articles", controllers.CreateArticle)
+	router.PUT("/articles", controllers.UpdateArticle)
 	router.DELETE("/articles/:id", controllers.DeleteArticle)
 }

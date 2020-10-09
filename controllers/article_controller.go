@@ -75,3 +75,26 @@ func CreateArticle(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, result)
 }
+
+// UpdateArticle updates an existing article
+func UpdateArticle(c *gin.Context) {
+	var article articles.Article
+
+	if err := c.ShouldBindJSON(&article); err != nil {
+		restErr := errors.NewBadRequestError("invalid json body")
+
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+
+	if _, err := articles.Get(article.ID); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+
+	err := article.Update()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+
+	c.JSON(http.StatusCreated, article)
+}
