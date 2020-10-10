@@ -20,8 +20,8 @@ func GetArticle(c *gin.Context) {
 		return
 	}
 
-	article, dbErr := articles.Get(id)
-	if dbErr != nil {
+	article, dbErr := services.GetArticle(id)
+	if err != nil {
 		c.JSON(dbErr.Status, dbErr)
 	}
 
@@ -30,9 +30,9 @@ func GetArticle(c *gin.Context) {
 
 // GetAllArticles gets all articles
 func GetAllArticles(c *gin.Context) {
-	articles, dbErr := articles.GetAll()
-	if dbErr != nil {
-		c.JSON(dbErr.Status, dbErr)
+	articles, err := services.GetAllArticles()
+	if err != nil {
+		c.JSON(err.Status, err)
 	}
 
 	c.JSON(http.StatusOK, articles)
@@ -48,7 +48,7 @@ func DeleteArticle(c *gin.Context) {
 		return
 	}
 
-	articleID, dbErr := articles.Delete(id)
+	articleID, dbErr := services.DeleteArticle(id)
 	if dbErr != nil {
 		c.JSON(dbErr.Status, dbErr)
 	}
@@ -87,14 +87,15 @@ func UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	if _, err := articles.Get(article.ID); err != nil {
+	if _, err := services.GetArticle(article.ID); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
 
-	err := article.Update()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+	result, saveErr := services.UpdateArticle(article)
+	if saveErr != nil {
+		c.JSON(saveErr.Status, saveErr)
+		return
 	}
 
-	c.JSON(http.StatusCreated, article)
+	c.JSON(http.StatusOK, result)
 }
