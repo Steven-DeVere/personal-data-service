@@ -75,7 +75,7 @@ func (r *mutationResolver) UpdateArticle(ctx context.Context, input model.Update
 func (r *mutationResolver) DeleteArticle(ctx context.Context, id int) (int, error) {
 	url := fmt.Sprintf("http://localhost:3000/articles/%d", id)
 
-	req, err := http.NewRequest(http.MethodPut, url, nil)
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
