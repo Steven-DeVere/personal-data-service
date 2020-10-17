@@ -12,13 +12,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/devere-here/personal-data-service/domain/articles"
 	"github.com/devere-here/personal-data-service/graph/generated"
 	"github.com/devere-here/personal-data-service/graph/model"
 )
 
-func (r *mutationResolver) CreateArticle(ctx context.Context, input model.CreateArticleInput) (*articles.Article, error) {
-	url := "/articles"
+func (r *mutationResolver) CreateArticle(ctx context.Context, input model.CreateArticleInput) (*model.Article, error) {
+	url := "http://localhost:3000/articles"
 	jsonInput, err := json.Marshal(input)
 	if err != nil {
 		log.Fatal(err)
@@ -39,14 +38,14 @@ func (r *mutationResolver) CreateArticle(ctx context.Context, input model.Create
 		log.Fatal(err)
 	}
 
-	article := articles.Article{}
+	article := model.Article{}
 	err = json.Unmarshal(body, &article)
 
 	return &article, err
 }
 
-func (r *mutationResolver) UpdateArticle(ctx context.Context, input model.UpdateArticleInput) (*articles.Article, error) {
-	url := "/articles"
+func (r *mutationResolver) UpdateArticle(ctx context.Context, input model.UpdateArticleInput) (*model.Article, error) {
+	url := "http://localhost:3000/articles"
 	jsonInput, err := json.Marshal(input)
 	if err != nil {
 		log.Fatal(err)
@@ -67,14 +66,14 @@ func (r *mutationResolver) UpdateArticle(ctx context.Context, input model.Update
 		log.Fatal(err)
 	}
 
-	article := articles.Article{}
+	article := model.Article{}
 	err = json.Unmarshal(body, &article)
 
 	return &article, err
 }
 
-func (r *mutationResolver) DeleteArticle(ctx context.Context, id int) (*int64, error) {
-	url := fmt.Sprintf("/articles/%s", id)
+func (r *mutationResolver) DeleteArticle(ctx context.Context, id int) (int, error) {
+	url := fmt.Sprintf("http://localhost:3000/articles/%d", id)
 
 	req, err := http.NewRequest(http.MethodPut, url, nil)
 	if err != nil {
@@ -94,11 +93,11 @@ func (r *mutationResolver) DeleteArticle(ctx context.Context, id int) (*int64, e
 	var i64 int64
 	err = json.Unmarshal(body, &i64)
 
-	return &i64, err
+	return int(i64), err
 }
 
-func (r *queryResolver) Article(ctx context.Context, id int) (*articles.Article, error) {
-	url := fmt.Sprintf("/articles/%s", id)
+func (r *queryResolver) Article(ctx context.Context, id int) (*model.Article, error) {
+	url := fmt.Sprintf("http://localhost:3000/articles/%d", id)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -114,14 +113,14 @@ func (r *queryResolver) Article(ctx context.Context, id int) (*articles.Article,
 		log.Fatal(err)
 	}
 
-	article := articles.Article{}
+	article := model.Article{}
 	err = json.Unmarshal(body, &article)
 
 	return &article, err
 }
 
-func (r *queryResolver) Articles(ctx context.Context) (*[]articles.Article, error) {
-	url := "/articles"
+func (r *queryResolver) Articles(ctx context.Context) ([]*model.Article, error) {
+	url := "http://localhost:3000/articles"
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -137,10 +136,10 @@ func (r *queryResolver) Articles(ctx context.Context) (*[]articles.Article, erro
 		log.Fatal(err)
 	}
 
-	articles := []articles.Article{}
+	articles := []*model.Article{}
 	err = json.Unmarshal(body, &articles)
 
-	return &articles, err
+	return articles, err
 }
 
 // Mutation returns generated.MutationResolver implementation.
