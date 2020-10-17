@@ -12,8 +12,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/devere-here/personal-data-service/graph/generated"
-	"github.com/devere-here/personal-data-service/graph/model"
+	"github.com/devere-here/personal-data-service/graphql-server/graph/generated"
+	"github.com/devere-here/personal-data-service/graphql-server/graph/model"
 )
 
 func (r *mutationResolver) CreateArticle(ctx context.Context, input model.CreateArticleInput) (*model.Article, error) {

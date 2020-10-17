@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/devere-here/personal-data-service/datasources/mysql/articlesdb"
-	"github.com/devere-here/personal-data-service/domain/errors"
+	"github.com/devere-here/personal-data-service/rest-server/datasources/mysql/articlesdb"
+	"github.com/devere-here/personal-data-service/rest-server/domain/errors"
 )
 
 const (

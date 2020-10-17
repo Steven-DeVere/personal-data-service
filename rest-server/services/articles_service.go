@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/devere-here/personal-data-service/domain/articles"
-	"github.com/devere-here/personal-data-service/domain/errors"
+	"github.com/devere-here/personal-data-service/rest-server/domain/articles"
+	"github.com/devere-here/personal-data-service/rest-server/domain/errors"
 )
 
 // GetArticle creates an article

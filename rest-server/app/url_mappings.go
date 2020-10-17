@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/devere-here/personal-data-service/controllers"
+	"github.com/devere-here/personal-data-service/rest-server/controllers"
 )
 
 func mapUrls() {

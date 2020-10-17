@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/devere-here/personal-data-service/domain/articles"
-	"github.com/devere-here/personal-data-service/domain/errors"
-	"github.com/devere-here/personal-data-service/services"
+	"github.com/devere-here/personal-data-service/rest-server/domain/articles"
+	"github.com/devere-here/personal-data-service/rest-server/domain/errors"
+	"github.com/devere-here/personal-data-service/rest-server/services"
 	"github.com/gin-gonic/gin"
 )
 

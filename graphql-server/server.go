@@ -7,8 +7,8 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/devere-here/personal-data-service/graph"
-	"github.com/devere-here/personal-data-service/graph/generated"
+	"github.com/devere-here/personal-data-service/graphql-server/graph"
+	"github.com/devere-here/personal-data-service/graphql-server/graph/generated"
 )
 
 const defaultPort = "8080"

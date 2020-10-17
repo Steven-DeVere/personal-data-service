@@ -1,6 +1,6 @@
 package articles
 
-import "github.com/devere-here/personal-data-service/domain/errors"
+import "github.com/devere-here/personal-data-service/rest-server/domain/errors"
 
 // Article defines the article struct
 type Article struct {
