@@ -37,8 +37,8 @@ func CreateSideProject(sideProject sideprojects.SideProject) (*sideprojects.Side
 	return &sideProject, nil
 }
 
-// UpdateSideProjects updates a sideProject
-func UpdateSideProjects(sideProject sideprojects.SideProject) (*sideprojects.SideProject, *errors.RestErr) {
+// UpdateSideProject updates a sideProject
+func UpdateSideProject(sideProject sideprojects.SideProject) (*sideprojects.SideProject, *errors.RestErr) {
 	if err := sideProject.Validate(); err != nil {
 		return nil, err
 	}
