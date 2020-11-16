@@ -1,4 +1,4 @@
-package sideprojectsdb
+package projectsdb
 
 import (
 	"database/sql"
@@ -26,7 +26,7 @@ func init() {
 	userName := os.Getenv("MYSQL_USER_NAME")
 	password := os.Getenv("MYSQL_PASSWORD")
 	hostName := os.Getenv("MYSQL_HOST_NAME")
-	dbName := os.Getenv("MYSQL_SIDEPROJECTS_DB_NAME")
+	dbName := os.Getenv("MYSQL_PROJECTS_DB_NAME")
 
 	dataSourceName := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s",

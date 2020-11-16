@@ -15,9 +15,9 @@ func mapUrls() {
 	router.DELETE("/articles/:id", controllers.DeleteArticle)
 
 	// project endpoints
-	router.GET("/projects", controllers.GetAllSideProjects)
-	router.GET("/projects/:id", controllers.GetSideProject)
-	router.POST("/projects", controllers.CreateSideProject)
-	router.PUT("/projects", controllers.UpdateSideProject)
-	router.DELETE("/projects/:id", controllers.DeleteSideProject)
+	router.GET("/projects", controllers.GetAllProjects)
+	router.GET("/projects/:id", controllers.GetProject)
+	router.POST("/projects", controllers.CreateProject)
+	router.PUT("/projects", controllers.UpdateProject)
+	router.DELETE("/projects/:id", controllers.DeleteProject)
 }

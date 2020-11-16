@@ -5,13 +5,13 @@ import (
 	"strconv"
 
 	"github.com/devere-here/personal-data-service/rest-server/domain/errors"
-	"github.com/devere-here/personal-data-service/rest-server/domain/sideprojects"
+	"github.com/devere-here/personal-data-service/rest-server/domain/projects"
 	"github.com/devere-here/personal-data-service/rest-server/services"
 	"github.com/gin-gonic/gin"
 )
 
-// GetSideProject gets a specific project
-func GetSideProject(c *gin.Context) {
+// GetProject gets a specific project
+func GetProject(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		restErr := errors.NewBadRequestError("invalid id query string")
@@ -20,7 +20,7 @@ func GetSideProject(c *gin.Context) {
 		return
 	}
 
-	project, dbErr := services.GetSideProject(id)
+	project, dbErr := services.GetProject(id)
 	if err != nil {
 		c.JSON(dbErr.Status, dbErr)
 	}
@@ -28,9 +28,9 @@ func GetSideProject(c *gin.Context) {
 	c.JSON(http.StatusOK, project)
 }
 
-// GetAllSideProjects gets all projects
-func GetAllSideProjects(c *gin.Context) {
-	projects, err := services.GetAllSideProjects()
+// GetAllProjects gets all projects
+func GetAllProjects(c *gin.Context) {
+	projects, err := services.GetAllProjects()
 	if err != nil {
 		c.JSON(err.Status, err)
 	}
@@ -38,8 +38,8 @@ func GetAllSideProjects(c *gin.Context) {
 	c.JSON(http.StatusOK, projects)
 }
 
-// DeleteSideProject deletes an article
-func DeleteSideProject(c *gin.Context) {
+// DeleteProject deletes an article
+func DeleteProject(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		restErr := errors.NewBadRequestError("invalid id query string")
@@ -48,17 +48,17 @@ func DeleteSideProject(c *gin.Context) {
 		return
 	}
 
-	sideProjectID, dbErr := services.DeleteSideProject(id)
+	projectID, dbErr := services.DeleteProject(id)
 	if dbErr != nil {
 		c.JSON(dbErr.Status, dbErr)
 	}
 
-	c.JSON(http.StatusOK, sideProjectID)
+	c.JSON(http.StatusOK, projectID)
 }
 
-// CreateSideProject creates a new article
-func CreateSideProject(c *gin.Context) {
-	var project sideprojects.SideProject
+// CreateProject creates a new article
+func CreateProject(c *gin.Context) {
+	var project projects.Project
 
 	if err := c.ShouldBindJSON(&project); err != nil {
 		restErr := errors.NewBadRequestError("invalid json body")
@@ -67,7 +67,7 @@ func CreateSideProject(c *gin.Context) {
 		return
 	}
 
-	result, saveErr := services.CreateSideProject(project)
+	result, saveErr := services.CreateProject(project)
 	if saveErr != nil {
 		c.JSON(saveErr.Status, saveErr)
 		return
@@ -76,9 +76,9 @@ func CreateSideProject(c *gin.Context) {
 	c.JSON(http.StatusCreated, result)
 }
 
-// UpdateSideProject updates an existing article
-func UpdateSideProject(c *gin.Context) {
-	var project sideprojects.SideProject
+// UpdateProject updates an existing article
+func UpdateProject(c *gin.Context) {
+	var project projects.Project
 
 	if err := c.ShouldBindJSON(&project); err != nil {
 		restErr := errors.NewBadRequestError("invalid json body")
@@ -87,11 +87,11 @@ func UpdateSideProject(c *gin.Context) {
 		return
 	}
 
-	if _, err := services.GetSideProject(project.ID); err != nil {
+	if _, err := services.GetProject(project.ID); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
 
-	result, saveErr := services.UpdateSideProject(project)
+	result, saveErr := services.UpdateProject(project)
 	if saveErr != nil {
 		c.JSON(saveErr.Status, saveErr)
 		return
