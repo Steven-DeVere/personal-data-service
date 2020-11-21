@@ -10,12 +10,17 @@ schema {
 type Query {
   article(id: Int!): Article
   articles: [Article!]!
+  project(id: Int!): Project
+  projects: [Project!]!
 }
 
 type Mutation {
   createArticle(input: CreateArticleInput!): Article
   updateArticle(input: UpdateArticleInput!): Article
   deleteArticle(id: Int!): Int!
+  createProject(input: CreateProjectInput!): Project
+  updateProject(input: UpdateProjectInput!): Project
+  deleteProject(id: Int!): Int!
 }
 
 input CreateArticleInput {
@@ -37,4 +42,31 @@ type Article {
   title: String
   blurb: String
   Content: String
+}
+
+input CreateProjectInput {
+  name: String!
+  blurb: String!
+  repoUrl: String!
+  projectUrl: String
+  imageUrl: String
+}
+
+input UpdateProjectInput {
+  id: Int
+  name: String!
+  blurb: String!
+  repoUrl: String!
+  projectUrl: String
+  imageUrl: String
+}
+
+# Project
+type Project {
+  id: Int
+  name: String!
+  blurb: String!
+  repoUrl: String!
+  projectUrl: String
+  imageUrl: String
 }

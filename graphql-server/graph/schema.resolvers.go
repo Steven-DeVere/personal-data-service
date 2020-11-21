@@ -96,6 +96,18 @@ func (r *mutationResolver) DeleteArticle(ctx context.Context, id int) (int, erro
 	return int(i64), err
 }
 
+func (r *mutationResolver) CreateProject(ctx context.Context, input model.CreateProjectInput) (*model.Project, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdateProject(ctx context.Context, input model.UpdateProjectInput) (*model.Project, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) DeleteProject(ctx context.Context, id int) (int, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Article(ctx context.Context, id int) (*model.Article, error) {
 	url := fmt.Sprintf("http://localhost:3000/articles/%d", id)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -140,6 +152,14 @@ func (r *queryResolver) Articles(ctx context.Context) ([]*model.Article, error) 
 	err = json.Unmarshal(body, &articles)
 
 	return articles, err
+}
+
+func (r *queryResolver) Project(ctx context.Context, id int) (*model.Project, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Projects(ctx context.Context) ([]*model.Project, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 // Mutation returns generated.MutationResolver implementation.

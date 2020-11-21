@@ -15,9 +15,35 @@ type CreateArticleInput struct {
 	Content string  `json:"Content"`
 }
 
+type CreateProjectInput struct {
+	Name       string  `json:"name"`
+	Blurb      string  `json:"blurb"`
+	RepoURL    string  `json:"repoUrl"`
+	ProjectURL *string `json:"projectUrl"`
+	ImageURL   *string `json:"imageUrl"`
+}
+
+type Project struct {
+	ID         *int    `json:"id"`
+	Name       string  `json:"name"`
+	Blurb      string  `json:"blurb"`
+	RepoURL    string  `json:"repoUrl"`
+	ProjectURL *string `json:"projectUrl"`
+	ImageURL   *string `json:"imageUrl"`
+}
+
 type UpdateArticleInput struct {
 	ID      *int    `json:"id"`
 	Title   string  `json:"title"`
 	Blurb   *string `json:"blurb"`
 	Content string  `json:"Content"`
+}
+
+type UpdateProjectInput struct {
+	ID         *int    `json:"id"`
+	Name       string  `json:"name"`
+	Blurb      string  `json:"blurb"`
+	RepoURL    string  `json:"repoUrl"`
+	ProjectURL *string `json:"projectUrl"`
+	ImageURL   *string `json:"imageUrl"`
 }
