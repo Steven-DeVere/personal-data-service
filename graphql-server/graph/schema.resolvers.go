@@ -97,15 +97,83 @@ func (r *mutationResolver) DeleteArticle(ctx context.Context, id int) (int, erro
 }
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input model.CreateProjectInput) (*model.Project, error) {
-	panic(fmt.Errorf("not implemented"))
+	url := "http://localhost:3000/projects"
+	jsonInput, err := json.Marshal(input)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(jsonInput))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := r.Client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	project := model.Project{}
+	err = json.Unmarshal(body, &project)
+
+	return &project, err
 }
 
 func (r *mutationResolver) UpdateProject(ctx context.Context, input model.UpdateProjectInput) (*model.Project, error) {
-	panic(fmt.Errorf("not implemented"))
+	url := "http://localhost:3000/projects"
+	jsonInput, err := json.Marshal(input)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewReader(jsonInput))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := r.Client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	project := model.Project{}
+	err = json.Unmarshal(body, &project)
+
+	return &project, err
 }
 
 func (r *mutationResolver) DeleteProject(ctx context.Context, id int) (int, error) {
-	panic(fmt.Errorf("not implemented"))
+	url := fmt.Sprintf("http://localhost:3000/projects/%d", id)
+
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := r.Client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var i64 int64
+	err = json.Unmarshal(body, &i64)
+
+	return int(i64), err
 }
 
 func (r *queryResolver) Article(ctx context.Context, id int) (*model.Article, error) {
@@ -155,11 +223,49 @@ func (r *queryResolver) Articles(ctx context.Context) ([]*model.Article, error) 
 }
 
 func (r *queryResolver) Project(ctx context.Context, id int) (*model.Project, error) {
-	panic(fmt.Errorf("not implemented"))
+	url := fmt.Sprintf("http://localhost:3000/projects/%d", id)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := r.Client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	project := model.Project{}
+	err = json.Unmarshal(body, &project)
+
+	return &project, err
 }
 
 func (r *queryResolver) Projects(ctx context.Context) ([]*model.Project, error) {
-	panic(fmt.Errorf("not implemented"))
+	url := "http://localhost:3000/projects"
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := r.Client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	projects := []*model.Project{}
+	err = json.Unmarshal(body, &projects)
+
+	return projects, err
 }
 
 // Mutation returns generated.MutationResolver implementation.
