@@ -4,13 +4,12 @@ import "github.com/devere-here/personal-data-service/rest-server/domain/errors"
 
 // Project defines the project struct
 type Project struct {
-	ID           int64    `json:"id"`
-	Name         string   `json:"name"`
-	Blurb        string   `json:"blurb"`
-	Technologies []string `json:"technologies"`
-	RepoURL      string   `json:"repoUrl"`
-	ProjectURL   string   `json:"projectUrl"`
-	ImageURL     string   `json:"imageUrl"`
+	ID         int64  `json:"id"`
+	Name       string `json:"name"`
+	Blurb      string `json:"blurb"`
+	RepoURL    string `json:"repoUrl"`
+	ProjectURL string `json:"projectUrl"`
+	ImageURL   string `json:"imageUrl"`
 }
 
 // Validate validates the project

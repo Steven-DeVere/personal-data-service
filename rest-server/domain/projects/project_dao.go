@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	queryInsertProjects = "INSERT INTO projects(name, blurb, technologies, repoUrl, projectUrl, imageUrl) VALUES(?, ?, ?, ?, ?, ?);"
+	queryInsertProjects = "INSERT INTO projects(name, blurb, repoUrl, projectUrl, imageUrl) VALUES(?, ?, ?, ?, ?);"
 	queryGetAllProjects = "SELECT * FROM projects;"
 	queryGetProject     = "SELECT * FROM projects WHERE id=?;"
 	queryRemoveProject  = "DELETE FROM projects WHERE id=?;"
-	queryUpdateProject  = "UPDATE projects SET name=?, blurb=?, technologies=?, repoUrl=?, projectUrl=?, imageUrl=? WHERE id=?;"
+	queryUpdateProject  = "UPDATE projects SET name=?, blurb=?, repoUrl=?, projectUrl=?, imageUrl=? WHERE id=?;"
 )
 
 // Only point in the application where you interact with the database
@@ -32,7 +32,7 @@ func Get(projectID int64) (*Project, *errors.RestErr) {
 
 	project := Project{}
 	result := stmt.QueryRow(projectID)
-	if err := result.Scan(&project.ID, &project.Name, &project.Blurb, &project.Technologies, &project.RepoURL, &project.ProjectURL, &project.ImageURL); err != nil {
+	if err := result.Scan(&project.ID, &project.Name, &project.Blurb, &project.RepoURL, &project.ProjectURL, &project.ImageURL); err != nil {
 		return nil, errors.NewInternalServerError(fmt.Sprintf("error when trying to get project %d", projectID))
 	}
 
@@ -56,7 +56,7 @@ func GetAll() (*[]Project, *errors.RestErr) {
 
 	for rows.Next() {
 		project := Project{}
-		if err := rows.Scan(&project.ID, &project.Name, &project.Blurb, &project.Technologies, &project.RepoURL, &project.ProjectURL, &project.ImageURL); err != nil {
+		if err := rows.Scan(&project.ID, &project.Name, &project.Blurb, &project.RepoURL, &project.ProjectURL, &project.ImageURL); err != nil {
 			log.Fatal(err)
 		}
 
@@ -74,7 +74,7 @@ func (project *Project) Save() *errors.RestErr {
 	}
 	defer stmt.Close()
 
-	insertResult, err := stmt.Exec(project.ID, project.Name, project.Blurb, project.Technologies, project.RepoURL, project.ProjectURL, project.ImageURL)
+	insertResult, err := stmt.Exec(project.Name, project.Blurb, project.RepoURL, project.ProjectURL, project.ImageURL)
 	if err != nil {
 		return errors.NewInternalServerError(fmt.Sprintf("error when trying to save project: %s", err.Error()))
 	}
@@ -112,7 +112,7 @@ func (project *Project) Update() *errors.RestErr {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(project.ID, project.Name, project.Blurb, project.Technologies, project.RepoURL, project.ProjectURL, project.ImageURL)
+	_, err = stmt.Exec(project.Name, project.Blurb, project.RepoURL, project.ProjectURL, project.ImageURL, project.ID)
 	if err != nil {
 		return errors.NewInternalServerError(fmt.Sprintf("error when trying to update project: %s", err.Error()))
 	}
