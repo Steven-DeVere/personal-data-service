@@ -4,16 +4,20 @@ import "github.com/devere-here/personal-data-service/rest-server/domain/errors"
 
 // Article defines the article struct
 type Article struct {
-	ID      int64  `json:"id"`
-	Title   string `json:"title"`
-	Blurb   string `json:"blurb"`
-	Content string `json:"content"`
+	ID         int64  `json:"id"`
+	Title      string `json:"title"`
+	ArticleURL string `json:"articleUrl"`
+	ImageURL   string `json:"imageUrl"`
 }
 
 // Validate validates the article
 func (article *Article) Validate() *errors.RestErr {
-	if article.Content == "" {
-		return errors.NewBadRequestError("Invalid Content")
+	if article.ArticleURL == "" {
+		return errors.NewBadRequestError("Invalid ArticleURL")
+	}
+
+	if article.ImageURL == "" {
+		return errors.NewBadRequestError("Invalid ImageURL")
 	}
 
 	if article.Title == "" {

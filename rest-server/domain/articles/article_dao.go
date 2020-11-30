@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	queryInsertArticles = "INSERT INTO articles(title, blurb, content) VALUES(?, ?, ?);"
+	queryInsertArticles = "INSERT INTO articles(title, articleUrl, imageUrl) VALUES(?, ?, ?);"
 	queryGetAllArticles = "SELECT * FROM articles;"
 	queryGetArticle     = "SELECT * FROM articles WHERE id=?;"
 	queryRemoveArticle  = "DELETE FROM articles WHERE id=?;"
-	queryUpdateArticle  = "UPDATE articles SET title=?, blurb=?, content=? WHERE id=?;"
+	queryUpdateArticle  = "UPDATE articles SET title=?, articleUrl=?, imageUrl=? WHERE id=?;"
 )
 
 // Only point in the application where you interact with the database
@@ -32,7 +32,7 @@ func Get(articleID int64) (*Article, *errors.RestErr) {
 
 	article := Article{}
 	result := stmt.QueryRow(articleID)
-	if err := result.Scan(&article.ID, &article.Title, &article.Blurb, &article.Content); err != nil {
+	if err := result.Scan(&article.ID, &article.Title, &article.ArticleURL, &article.ImageURL); err != nil {
 		return nil, errors.NewInternalServerError(fmt.Sprintf("error when trying to get article %d", articleID))
 	}
 
@@ -56,7 +56,7 @@ func GetAll() (*[]Article, *errors.RestErr) {
 
 	for rows.Next() {
 		article := Article{}
-		if err := rows.Scan(&article.ID, &article.Title, &article.Blurb, &article.Content); err != nil {
+		if err := rows.Scan(&article.ID, &article.Title, &article.ArticleURL, &article.ImageURL); err != nil {
 			log.Fatal(err)
 		}
 
@@ -74,7 +74,7 @@ func (article *Article) Save() *errors.RestErr {
 	}
 	defer stmt.Close()
 
-	insertResult, err := stmt.Exec(article.Title, article.Blurb, article.Content)
+	insertResult, err := stmt.Exec(article.Title, article.ArticleURL, article.ImageURL)
 	if err != nil {
 		return errors.NewInternalServerError(fmt.Sprintf("error when trying to save user: %s", err.Error()))
 	}
@@ -112,7 +112,7 @@ func (article *Article) Update() *errors.RestErr {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(article.Title, article.Blurb, article.Content, article.ID)
+	_, err = stmt.Exec(article.Title, article.ArticleURL, article.ImageURL, article.ID)
 	if err != nil {
 		return errors.NewInternalServerError(fmt.Sprintf("error when trying to update article: %s", err.Error()))
 	}
