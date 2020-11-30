@@ -25,23 +25,23 @@ type Mutation {
 
 input CreateArticleInput {
   title: String!
-  blurb: String
-  Content: String!
+  articleUrl: String!
+  imageUrl: String!
 }
 
 input UpdateArticleInput {
   id: Int
   title: String!
-  blurb: String
-  Content: String!
+  articleUrl: String!
+  imageUrl: String!
 }
 
 # Article
 type Article {
   id: Int
   title: String
-  blurb: String
-  Content: String
+  articleUrl: String
+  imageUrl: String
 }
 
 input CreateProjectInput {

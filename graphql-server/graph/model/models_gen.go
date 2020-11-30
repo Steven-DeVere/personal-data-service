@@ -3,16 +3,16 @@
 package model
 
 type Article struct {
-	ID      *int    `json:"id"`
-	Title   *string `json:"title"`
-	Blurb   *string `json:"blurb"`
-	Content *string `json:"Content"`
+	ID         *int    `json:"id"`
+	Title      *string `json:"title"`
+	ArticleURL *string `json:"articleUrl"`
+	ImageURL   *string `json:"imageUrl"`
 }
 
 type CreateArticleInput struct {
-	Title   string  `json:"title"`
-	Blurb   *string `json:"blurb"`
-	Content string  `json:"Content"`
+	Title      string `json:"title"`
+	ArticleURL string `json:"articleUrl"`
+	ImageURL   string `json:"imageUrl"`
 }
 
 type CreateProjectInput struct {
@@ -33,10 +33,10 @@ type Project struct {
 }
 
 type UpdateArticleInput struct {
-	ID      *int    `json:"id"`
-	Title   string  `json:"title"`
-	Blurb   *string `json:"blurb"`
-	Content string  `json:"Content"`
+	ID         *int   `json:"id"`
+	Title      string `json:"title"`
+	ArticleURL string `json:"articleUrl"`
+	ImageURL   string `json:"imageUrl"`
 }
 
 type UpdateProjectInput struct {

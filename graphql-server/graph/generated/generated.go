@@ -44,10 +44,10 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Article struct {
-		Blurb   func(childComplexity int) int
-		Content func(childComplexity int) int
-		ID      func(childComplexity int) int
-		Title   func(childComplexity int) int
+		ArticleURL func(childComplexity int) int
+		ID         func(childComplexity int) int
+		ImageURL   func(childComplexity int) int
+		Title      func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -106,19 +106,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Article.blurb":
-		if e.complexity.Article.Blurb == nil {
+	case "Article.articleUrl":
+		if e.complexity.Article.ArticleURL == nil {
 			break
 		}
 
-		return e.complexity.Article.Blurb(childComplexity), true
-
-	case "Article.Content":
-		if e.complexity.Article.Content == nil {
-			break
-		}
-
-		return e.complexity.Article.Content(childComplexity), true
+		return e.complexity.Article.ArticleURL(childComplexity), true
 
 	case "Article.id":
 		if e.complexity.Article.ID == nil {
@@ -126,6 +119,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Article.ID(childComplexity), true
+
+	case "Article.imageUrl":
+		if e.complexity.Article.ImageURL == nil {
+			break
+		}
+
+		return e.complexity.Article.ImageURL(childComplexity), true
 
 	case "Article.title":
 		if e.complexity.Article.Title == nil {
@@ -377,23 +377,23 @@ type Mutation {
 
 input CreateArticleInput {
   title: String!
-  blurb: String
-  Content: String!
+  articleUrl: String!
+  imageUrl: String!
 }
 
 input UpdateArticleInput {
   id: Int
   title: String!
-  blurb: String
-  Content: String!
+  articleUrl: String!
+  imageUrl: String!
 }
 
 # Article
 type Article {
   id: Int
   title: String
-  blurb: String
-  Content: String
+  articleUrl: String
+  imageUrl: String
 }
 
 input CreateProjectInput {
@@ -667,7 +667,7 @@ func (ec *executionContext) _Article_title(ctx context.Context, field graphql.Co
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Article_blurb(ctx context.Context, field graphql.CollectedField, obj *model.Article) (ret graphql.Marshaler) {
+func (ec *executionContext) _Article_articleUrl(ctx context.Context, field graphql.CollectedField, obj *model.Article) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -685,7 +685,7 @@ func (ec *executionContext) _Article_blurb(ctx context.Context, field graphql.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Blurb, nil
+		return obj.ArticleURL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -699,7 +699,7 @@ func (ec *executionContext) _Article_blurb(ctx context.Context, field graphql.Co
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Article_Content(ctx context.Context, field graphql.CollectedField, obj *model.Article) (ret graphql.Marshaler) {
+func (ec *executionContext) _Article_imageUrl(ctx context.Context, field graphql.CollectedField, obj *model.Article) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -717,7 +717,7 @@ func (ec *executionContext) _Article_Content(ctx context.Context, field graphql.
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Content, nil
+		return obj.ImageURL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2492,19 +2492,19 @@ func (ec *executionContext) unmarshalInputCreateArticleInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "blurb":
+		case "articleUrl":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("blurb"))
-			it.Blurb, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("articleUrl"))
+			it.ArticleURL, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "Content":
+		case "imageUrl":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Content"))
-			it.Content, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUrl"))
+			it.ImageURL, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2588,19 +2588,19 @@ func (ec *executionContext) unmarshalInputUpdateArticleInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "blurb":
+		case "articleUrl":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("blurb"))
-			it.Blurb, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("articleUrl"))
+			it.ArticleURL, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "Content":
+		case "imageUrl":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Content"))
-			it.Content, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUrl"))
+			it.ImageURL, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2693,10 +2693,10 @@ func (ec *executionContext) _Article(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Article_id(ctx, field, obj)
 		case "title":
 			out.Values[i] = ec._Article_title(ctx, field, obj)
-		case "blurb":
-			out.Values[i] = ec._Article_blurb(ctx, field, obj)
-		case "Content":
-			out.Values[i] = ec._Article_Content(ctx, field, obj)
+		case "articleUrl":
+			out.Values[i] = ec._Article_articleUrl(ctx, field, obj)
+		case "imageUrl":
+			out.Values[i] = ec._Article_imageUrl(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
