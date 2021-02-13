@@ -53,10 +53,13 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateArticle func(childComplexity int, input model.CreateArticleInput) int
 		CreateProject func(childComplexity int, input model.CreateProjectInput) int
+		CreateTech    func(childComplexity int, input model.CreateTechInput) int
 		DeleteArticle func(childComplexity int, id int) int
 		DeleteProject func(childComplexity int, id int) int
+		DeleteTech    func(childComplexity int, id int) int
 		UpdateArticle func(childComplexity int, input model.UpdateArticleInput) int
 		UpdateProject func(childComplexity int, input model.UpdateProjectInput) int
+		UpdateTech    func(childComplexity int, input model.UpdateTechInput) int
 	}
 
 	Project struct {
@@ -69,10 +72,19 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Alltech  func(childComplexity int) int
 		Article  func(childComplexity int, id int) int
 		Articles func(childComplexity int) int
 		Project  func(childComplexity int, id int) int
 		Projects func(childComplexity int) int
+		Tech     func(childComplexity int, id int) int
+	}
+
+	Tech struct {
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+		Proficiency func(childComplexity int) int
+		Type        func(childComplexity int) int
 	}
 }
 
@@ -83,12 +95,17 @@ type MutationResolver interface {
 	CreateProject(ctx context.Context, input model.CreateProjectInput) (*model.Project, error)
 	UpdateProject(ctx context.Context, input model.UpdateProjectInput) (*model.Project, error)
 	DeleteProject(ctx context.Context, id int) (int, error)
+	CreateTech(ctx context.Context, input model.CreateTechInput) (*model.Tech, error)
+	UpdateTech(ctx context.Context, input model.UpdateTechInput) (*model.Tech, error)
+	DeleteTech(ctx context.Context, id int) (int, error)
 }
 type QueryResolver interface {
 	Article(ctx context.Context, id int) (*model.Article, error)
 	Articles(ctx context.Context) ([]*model.Article, error)
 	Project(ctx context.Context, id int) (*model.Project, error)
 	Projects(ctx context.Context) ([]*model.Project, error)
+	Tech(ctx context.Context, id int) (*model.Tech, error)
+	Alltech(ctx context.Context) ([]*model.Tech, error)
 }
 
 type executableSchema struct {
@@ -158,6 +175,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateProject(childComplexity, args["input"].(model.CreateProjectInput)), true
 
+	case "Mutation.createTech":
+		if e.complexity.Mutation.CreateTech == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createTech_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateTech(childComplexity, args["input"].(model.CreateTechInput)), true
+
 	case "Mutation.deleteArticle":
 		if e.complexity.Mutation.DeleteArticle == nil {
 			break
@@ -182,6 +211,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteProject(childComplexity, args["id"].(int)), true
 
+	case "Mutation.deleteTech":
+		if e.complexity.Mutation.DeleteTech == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteTech_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteTech(childComplexity, args["id"].(int)), true
+
 	case "Mutation.updateArticle":
 		if e.complexity.Mutation.UpdateArticle == nil {
 			break
@@ -205,6 +246,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateProject(childComplexity, args["input"].(model.UpdateProjectInput)), true
+
+	case "Mutation.updateTech":
+		if e.complexity.Mutation.UpdateTech == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTech_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTech(childComplexity, args["input"].(model.UpdateTechInput)), true
 
 	case "Project.blurb":
 		if e.complexity.Project.Blurb == nil {
@@ -248,6 +301,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.RepoURL(childComplexity), true
 
+	case "Query.alltech":
+		if e.complexity.Query.Alltech == nil {
+			break
+		}
+
+		return e.complexity.Query.Alltech(childComplexity), true
+
 	case "Query.article":
 		if e.complexity.Query.Article == nil {
 			break
@@ -285,6 +345,46 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Projects(childComplexity), true
+
+	case "Query.tech":
+		if e.complexity.Query.Tech == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tech_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tech(childComplexity, args["id"].(int)), true
+
+	case "Tech.id":
+		if e.complexity.Tech.ID == nil {
+			break
+		}
+
+		return e.complexity.Tech.ID(childComplexity), true
+
+	case "Tech.name":
+		if e.complexity.Tech.Name == nil {
+			break
+		}
+
+		return e.complexity.Tech.Name(childComplexity), true
+
+	case "Tech.proficiency":
+		if e.complexity.Tech.Proficiency == nil {
+			break
+		}
+
+		return e.complexity.Tech.Proficiency(childComplexity), true
+
+	case "Tech.type":
+		if e.complexity.Tech.Type == nil {
+			break
+		}
+
+		return e.complexity.Tech.Type(childComplexity), true
 
 	}
 	return 0, false
@@ -364,6 +464,8 @@ type Query {
   articles: [Article!]!
   project(id: Int!): Project
   projects: [Project!]!
+  tech(id: Int!): Tech
+  alltech: [Tech!]!
 }
 
 type Mutation {
@@ -373,6 +475,9 @@ type Mutation {
   createProject(input: CreateProjectInput!): Project
   updateProject(input: UpdateProjectInput!): Project
   deleteProject(id: Int!): Int!
+  createTech(input: CreateTechInput!): Tech
+  updateTech(input: UpdateTechInput!): Tech
+  deleteTech(id: Int!): Int!
 }
 
 input CreateArticleInput {
@@ -422,6 +527,27 @@ type Project {
   projectUrl: String
   imageUrl: String
 }
+
+input CreateTechInput {
+  name: String!
+  type: String!
+  proficiency: String!
+}
+
+input UpdateTechInput {
+  id: Int
+  name: String!
+  type: String!
+  proficiency: String!
+}
+
+# Tech
+type Tech {
+  id: Int
+  name: String!
+  type: String!
+  proficiency: String!
+}
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -460,6 +586,21 @@ func (ec *executionContext) field_Mutation_createProject_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createTech_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CreateTechInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateTechInput2githubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateTechInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteArticle_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -476,6 +617,21 @@ func (ec *executionContext) field_Mutation_deleteArticle_args(ctx context.Contex
 }
 
 func (ec *executionContext) field_Mutation_deleteProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteTech_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -520,6 +676,21 @@ func (ec *executionContext) field_Mutation_updateProject_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateTech_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdateTechInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateTechInput2githubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateTechInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -551,6 +722,21 @@ func (ec *executionContext) field_Query_article_args(ctx context.Context, rawArg
 }
 
 func (ec *executionContext) field_Query_project_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_tech_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -971,6 +1157,126 @@ func (ec *executionContext) _Mutation_deleteProject(ctx context.Context, field g
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createTech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createTech_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateTech(rctx, args["input"].(model.CreateTechInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Tech)
+	fc.Result = res
+	return ec.marshalOTech2ᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐTech(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateTech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateTech_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateTech(rctx, args["input"].(model.UpdateTechInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Tech)
+	fc.Result = res
+	return ec.marshalOTech2ᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐTech(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteTech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteTech_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteTech(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Project_id(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1320,6 +1626,80 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	return ec.marshalNProject2ᚕᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_tech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_tech_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tech(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Tech)
+	fc.Result = res
+	return ec.marshalOTech2ᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐTech(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_alltech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Alltech(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Tech)
+	fc.Result = res
+	return ec.marshalNTech2ᚕᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐTechᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1389,6 +1769,143 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Tech_id(ctx context.Context, field graphql.CollectedField, obj *model.Tech) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Tech",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Tech_name(ctx context.Context, field graphql.CollectedField, obj *model.Tech) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Tech",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Tech_type(ctx context.Context, field graphql.CollectedField, obj *model.Tech) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Tech",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Tech_proficiency(ctx context.Context, field graphql.CollectedField, obj *model.Tech) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Tech",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Proficiency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -2566,6 +3083,42 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateTechInput(ctx context.Context, obj interface{}) (model.CreateTechInput, error) {
+	var it model.CreateTechInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "proficiency":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("proficiency"))
+			it.Proficiency, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateArticleInput(ctx context.Context, obj interface{}) (model.UpdateArticleInput, error) {
 	var it model.UpdateArticleInput
 	var asMap = obj.(map[string]interface{})
@@ -2670,6 +3223,50 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateTechInput(ctx context.Context, obj interface{}) (model.UpdateTechInput, error) {
+	var it model.UpdateTechInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "proficiency":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("proficiency"))
+			it.Proficiency, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -2738,6 +3335,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_updateProject(ctx, field)
 		case "deleteProject":
 			out.Values[i] = ec._Mutation_deleteProject(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createTech":
+			out.Values[i] = ec._Mutation_createTech(ctx, field)
+		case "updateTech":
+			out.Values[i] = ec._Mutation_updateTech(ctx, field)
+		case "deleteTech":
+			out.Values[i] = ec._Mutation_deleteTech(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2860,10 +3466,74 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "tech":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_tech(ctx, field)
+				return res
+			})
+		case "alltech":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_alltech(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var techImplementors = []string{"Tech"}
+
+func (ec *executionContext) _Tech(ctx context.Context, sel ast.SelectionSet, obj *model.Tech) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, techImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Tech")
+		case "id":
+			out.Values[i] = ec._Tech_id(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._Tech_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "type":
+			out.Values[i] = ec._Tech_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "proficiency":
+			out.Values[i] = ec._Tech_proficiency(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3192,6 +3862,11 @@ func (ec *executionContext) unmarshalNCreateProjectInput2githubᚗcomᚋdevere�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateTechInput2githubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateTechInput(ctx context.Context, v interface{}) (model.CreateTechInput, error) {
+	res, err := ec.unmarshalInputCreateTechInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3269,6 +3944,53 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) marshalNTech2ᚕᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐTechᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Tech) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTech2ᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐTech(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNTech2ᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐTech(ctx context.Context, sel ast.SelectionSet, v *model.Tech) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Tech(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNUpdateArticleInput2githubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateArticleInput(ctx context.Context, v interface{}) (model.UpdateArticleInput, error) {
 	res, err := ec.unmarshalInputUpdateArticleInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3276,6 +3998,11 @@ func (ec *executionContext) unmarshalNUpdateArticleInput2githubᚗcomᚋdevere�
 
 func (ec *executionContext) unmarshalNUpdateProjectInput2githubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateProjectInput(ctx context.Context, v interface{}) (model.UpdateProjectInput, error) {
 	res, err := ec.unmarshalInputUpdateProjectInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateTechInput2githubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateTechInput(ctx context.Context, v interface{}) (model.UpdateTechInput, error) {
+	res, err := ec.unmarshalInputUpdateTechInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -3583,6 +4310,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
+}
+
+func (ec *executionContext) marshalOTech2ᚖgithubᚗcomᚋdevereᚑhereᚋpersonalᚑdataᚑserviceᚋgraphqlᚑserverᚋgraphᚋmodelᚐTech(ctx context.Context, sel ast.SelectionSet, v *model.Tech) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Tech(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

@@ -23,6 +23,12 @@ type CreateProjectInput struct {
 	ImageURL   *string `json:"imageUrl"`
 }
 
+type CreateTechInput struct {
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Proficiency string `json:"proficiency"`
+}
+
 type Project struct {
 	ID         *int    `json:"id"`
 	Name       string  `json:"name"`
@@ -30,6 +36,13 @@ type Project struct {
 	RepoURL    string  `json:"repoUrl"`
 	ProjectURL *string `json:"projectUrl"`
 	ImageURL   *string `json:"imageUrl"`
+}
+
+type Tech struct {
+	ID          *int   `json:"id"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Proficiency string `json:"proficiency"`
 }
 
 type UpdateArticleInput struct {
@@ -46,4 +59,11 @@ type UpdateProjectInput struct {
 	RepoURL    string  `json:"repoUrl"`
 	ProjectURL *string `json:"projectUrl"`
 	ImageURL   *string `json:"imageUrl"`
+}
+
+type UpdateTechInput struct {
+	ID          *int   `json:"id"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Proficiency string `json:"proficiency"`
 }

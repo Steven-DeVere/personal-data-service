@@ -12,6 +12,8 @@ type Query {
   articles: [Article!]!
   project(id: Int!): Project
   projects: [Project!]!
+  tech(id: Int!): Tech
+  alltech: [Tech!]!
 }
 
 type Mutation {
@@ -21,6 +23,9 @@ type Mutation {
   createProject(input: CreateProjectInput!): Project
   updateProject(input: UpdateProjectInput!): Project
   deleteProject(id: Int!): Int!
+  createTech(input: CreateTechInput!): Tech
+  updateTech(input: UpdateTechInput!): Tech
+  deleteTech(id: Int!): Int!
 }
 
 input CreateArticleInput {
@@ -69,4 +74,25 @@ type Project {
   repoUrl: String!
   projectUrl: String
   imageUrl: String
+}
+
+input CreateTechInput {
+  name: String!
+  type: String!
+  proficiency: String!
+}
+
+input UpdateTechInput {
+  id: Int
+  name: String!
+  type: String!
+  proficiency: String!
+}
+
+# Tech
+type Tech {
+  id: Int
+  name: String!
+  type: String!
+  proficiency: String!
 }
