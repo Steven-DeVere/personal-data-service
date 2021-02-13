@@ -3,7 +3,7 @@ package projects
 import "github.com/devere-here/personal-data-service/rest-server/domain/errors"
 
 // Project defines the project struct
-type Tech struct {
+type Project struct {
 	ID         int64  `json:"id"`
 	Name       string `json:"name"`
 	Blurb      string `json:"blurb"`

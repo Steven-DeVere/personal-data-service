@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetTech gets a specific project
+// GetTech gets a specific tech
 func GetTech(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -28,7 +28,7 @@ func GetTech(c *gin.Context) {
 	c.JSON(http.StatusOK, tech)
 }
 
-// GetAllTech gets all projects
+// GetAllTech gets all tech
 func GetAllTech(c *gin.Context) {
 	allTech, err := services.GetAllTech()
 	if err != nil {
